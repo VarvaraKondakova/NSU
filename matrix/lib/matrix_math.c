@@ -1,10 +1,8 @@
 #include "matrix_math.h"
 
-Matrix_NxM sumMatrices(Matrix_NxM *matrix1, Matrix_NxM *matrix2)
-{
-    if (matrix1->rows != matrix2->rows || matrix1->columns != matrix2->columns)
-    {
-        perror("Matrix dimensions don't match for addition!\n");
+Matrix_NxM sumMatrices(Matrix_NxM *matrix1, Matrix_NxM *matrix2) {
+    if (matrix1->rows != matrix2->rows || matrix1->columns != matrix2->columns) {
+        fprintf(stderr, "Matrix dimensions don't match for addition!\n");
         freeMatrix(matrix1);
         freeMatrix(matrix2);
         exit(EXIT_FAILURE);
@@ -15,22 +13,19 @@ Matrix_NxM sumMatrices(Matrix_NxM *matrix1, Matrix_NxM *matrix2)
     result.columns = matrix1->columns;
     InitMatrix(&result);
 
-    for (int i = 0; i < result.rows; i++)
-    {
-        for (int j = 0; j < result.columns; j++)
-        {
-            result.pointerDynamicMatrix[i][j] = matrix1->pointerDynamicMatrix[i][j] + matrix2->pointerDynamicMatrix[i][j];
+    for (int i = 0; i < result.rows; i++) {
+        for (int j = 0; j < result.columns; j++) {
+            result.pointerDynamicMatrix[i][j] =
+                    matrix1->pointerDynamicMatrix[i][j] + matrix2->pointerDynamicMatrix[i][j];
         }
     }
 
     return result;
 }
 
-Matrix_NxM multiplyMatrices(Matrix_NxM *matrix1, Matrix_NxM *matrix2)
-{
-    if (matrix1->columns != matrix2->rows)
-    {
-        perror("Incompatible matrix dimensions for multiplication!\n");
+Matrix_NxM multiplyMatrices(Matrix_NxM *matrix1, Matrix_NxM *matrix2) {
+    if (matrix1->columns != matrix2->rows) {
+        fprintf(stderr, "Incompatible matrix dimensions for multiplication!\n");
         freeMatrix(matrix1);
         freeMatrix(matrix2);
         exit(EXIT_FAILURE);
@@ -41,14 +36,12 @@ Matrix_NxM multiplyMatrices(Matrix_NxM *matrix1, Matrix_NxM *matrix2)
     result.columns = matrix2->columns;
     InitMatrix(&result);
 
-    for (int i = 0; i < result.rows; i++)
-    {
-        for (int j = 0; j < result.columns; j++)
-        {
+    for (int i = 0; i < result.rows; i++) {
+        for (int j = 0; j < result.columns; j++) {
             result.pointerDynamicMatrix[i][j] = 0;
-            for (int k = 0; k < matrix1->columns; k++)
-            {
-                result.pointerDynamicMatrix[i][j] += matrix1->pointerDynamicMatrix[i][k] * matrix2->pointerDynamicMatrix[k][j];
+            for (int k = 0; k < matrix1->columns; k++) {
+                result.pointerDynamicMatrix[i][j] +=
+                        matrix1->pointerDynamicMatrix[i][k] * matrix2->pointerDynamicMatrix[k][j];
             }
         }
     }
@@ -56,22 +49,19 @@ Matrix_NxM multiplyMatrices(Matrix_NxM *matrix1, Matrix_NxM *matrix2)
     return result;
 }
 
-Matrix_NxM getSubMatrix(const Matrix_NxM *matrix, int exclude_row, int exclude_col)
-{
+Matrix_NxM getSubMatrix(const Matrix_NxM *matrix, int exclude_row, int exclude_col) {
     Matrix_NxM subMatrix;
     subMatrix.rows = matrix->rows - 1;
     subMatrix.columns = matrix->columns - 1;
     InitMatrix(&subMatrix);
 
     int sub_i = 0;
-    for (int i = 0; i < matrix->rows; i++)
-    {
+    for (int i = 0; i < matrix->rows; i++) {
         if (i == exclude_row)
             continue;
 
         int sub_j = 0;
-        for (int j = 0; j < matrix->columns; j++)
-        {
+        for (int j = 0; j < matrix->columns; j++) {
             if (j == exclude_col)
                 continue;
 
@@ -84,12 +74,10 @@ Matrix_NxM getSubMatrix(const Matrix_NxM *matrix, int exclude_row, int exclude_c
     return subMatrix;
 }
 
-double determinantMatrix(Matrix_NxM *matrix)
-{
+double determinantMatrix(Matrix_NxM *matrix) {
 
-    if (matrix->rows != matrix->columns)
-    {
-        perror("Matrix must be square to compute determinant!\n");
+    if (matrix->rows != matrix->columns) {
+        fprintf(stderr, "Matrix must be square to compute determinant!\n");
         freeMatrix(matrix);
         exit(EXIT_FAILURE);
     }
@@ -98,8 +86,7 @@ double determinantMatrix(Matrix_NxM *matrix)
 
     if (n == 1)
         return matrix->pointerDynamicMatrix[0][0];
-    if (n == 2)
-    {
+    if (n == 2) {
         return matrix->pointerDynamicMatrix[0][0] * matrix->pointerDynamicMatrix[1][1] -
                matrix->pointerDynamicMatrix[0][1] * matrix->pointerDynamicMatrix[1][0];
     }
@@ -107,8 +94,7 @@ double determinantMatrix(Matrix_NxM *matrix)
     double det = 0.0;
     int sign = 1;
 
-    for (int j = 0; j < n; j++)
-    {
+    for (int j = 0; j < n; j++) {
         Matrix_NxM subMatrix = getSubMatrix(matrix, 0, j);
         det += sign * matrix->pointerDynamicMatrix[0][j] * determinantMatrix(&subMatrix);
         sign *= -1;
@@ -118,34 +104,26 @@ double determinantMatrix(Matrix_NxM *matrix)
     return det;
 }
 
-Matrix_NxM inverseMatrix(Matrix_NxM *matrix)
-{
-    if (matrix->rows != matrix->columns)
-    {
-        perror("Matrix must be square to compute inverse!\n");
+Matrix_NxM inverseMatrix(Matrix_NxM *matrix) {
+    if (matrix->rows != matrix->columns) {
+        fprintf(stderr, "Matrix must be square to compute inverse!\n");
         freeMatrix(matrix);
         exit(EXIT_FAILURE);
     }
 
     int n = matrix->rows;
 
-    if (n == 1)
-    {
-        perror("There is no such inverse matrix!\n");
+    if (n == 1) {
+        fprintf(stderr, "There is no such inverse matrix!\n");
         freeMatrix(matrix);
         exit(EXIT_FAILURE);
     }
 
-    Matrix_NxM inverse;
-    inverse.rows = n;
-    inverse.columns = n;
-    InitMatrix(&inverse);
-
     double det = determinantMatrix(matrix);
 
-    if (fabs(det) < 1e-10)
-    {
-        perror("Matrix is singular (determinant = 0), inverse doesn't exist!\n");
+    if (fabs(det) < 1e-10) {
+        fprintf(stderr, "Matrix is singular (determinant = 0), inverse doesn't exist!\n");
+        freeMatrix(matrix);
         exit(EXIT_FAILURE);
     }
 
@@ -154,10 +132,13 @@ Matrix_NxM inverseMatrix(Matrix_NxM *matrix)
     temp.columns = n;
     InitMatrix(&temp);
 
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
+    Matrix_NxM inverse;
+    inverse.rows = n;
+    inverse.columns = n;
+    InitMatrix(&inverse);
+
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
             Matrix_NxM subMatrix = getSubMatrix(matrix, i, j);
             double minorDet = determinantMatrix(&subMatrix);
 
@@ -167,10 +148,8 @@ Matrix_NxM inverseMatrix(Matrix_NxM *matrix)
         }
     }
 
-    for (int i = 0; i < n; i++)
-    {
-        for (int j = 0; j < n; j++)
-        {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
             inverse.pointerDynamicMatrix[j][i] = temp.pointerDynamicMatrix[i][j] / det;
         }
     }

@@ -15,8 +15,7 @@
  * cppcheck: `cppcheck --enable=all --suppress=missingIncludeSystem main.c lib/matrix_io.c lib/matrix_math.c`
  * valgrind: `valgrind --tool=memcheck --leak-check=yes -s ./a.out`
  */
-int main()
-{
+int main() {
     Matrix_NxM matrix;
 
     printf("\n===== Starting the input of dimensions for the matrix. =====\n");
@@ -31,13 +30,23 @@ int main()
     // printf("\n===== Starting automatic random data entry for the matrix. =====\n");
     // fillMatrixRandom(&matrix);
 
+    //if (saveMatrixToFile(&matrix, "assets/matrix_random.txt")) {
+    //    printf("Random matrix saved to 'assets/matrix_random.txt'\n");
+    //}
+
+
     printf("\n===== Starting data entry for the matrix from a file. =====\n");
-    if (readingMatrixFromFile(&matrix, "assets/matrix_one.txt"))
-    {
+    if (readingMatrixFromFile(&matrix, "assets/matrix_one.txt")) {
         printf("\n===== Starting the matrix output. =====\n");
         printf("\nThe %d by %d matrix:\n", matrix.rows, matrix.columns);
         PrintMatrix(&matrix);
 
+
+        if (saveMatrixToFile(&matrix, "assets/matrix_saved.txt")) {
+            printf("Matrix saved to 'assets/matrix_saved.txt'\n");
+        } else {
+            printf("Couldn't save the matrix\n")
+        }
         printf("\n===== Starting a search for the index of an element by its two-dimensional index in the matrix. =====\n");
         int i = 1, j = 1;
         int indexItem = searchingForElementIndexDynamicMatrix(&matrix, i, j);
@@ -88,6 +97,13 @@ int main()
     printf("\n===== Starting the cleaning of the allocated memory for the matrix. =====\n");
     freeMatrix(&matrix1);
     freeMatrix(&matrix2);
+
+    printf("\n===== Starting the creation of a matrix using the function Matrix_NxM createMatrix(int rows, int columns). =====\n");
+    Matrix_NxM matrixCreate;
+    matrixCreate = createMatrix(3, 3);
+    fillMatrixRandom(&matrixCreate);
+    PrintMatrix(&matrixCreate);
+    freeMatrix(&matrixCreate);
 
     return 0;
 }

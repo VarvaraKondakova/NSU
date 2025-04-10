@@ -21,5 +21,7 @@ int inputValueRowsAndColumns(Matrix_NxM *matrix);
 int fillMatrixRandom(Matrix_NxM *matrix);
 int searchingForElementIndexDynamicMatrix(const Matrix_NxM *matrix, int row, int column);
 int readingMatrixFromFile(Matrix_NxM *matrix, const char *pathToFile);
+int saveMatrixToFile(const Matrix_NxM *matrix, const char *pathToFile);
+Matrix_NxM createMatrix(int rows, int columns);
 
 #endif
