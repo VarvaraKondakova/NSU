@@ -88,8 +88,13 @@ int addSpaceChar(char *pointerText, int indexAddSpaceChar) {
 // Коррекция переданного массива через указатель
 int correctText(char *pointerText) {
     int isStartSentence = 1;
+    int isStartText = 1;
 
     for (int i = 0; pointerText[i] != '\0'; i++) {
+        if ((isSpace(pointerText[i]) && isStartText) || (isPunctuationMarks(pointerText[i]) && isStartText)) {
+            deleteChar(pointerText, i);
+        }
+
         if (isLetter(pointerText[i])) {
             if (isStartSentence) {
                 pointerText[i] = changeLowercase(pointerText[i]);
@@ -97,6 +102,8 @@ int correctText(char *pointerText) {
             } else {
                 pointerText[i] = changeCapital(pointerText[i]);
             }
+
+            isStartText = 0;
         }
 
         if (isSentenceEnd(pointerText[i])) {
@@ -127,10 +134,11 @@ int correctText(char *pointerText) {
     return 1;
 }
 
+
 int main() {
     char mainArrayChar[MAX_ARRAY_CHAR];
 
-    printf("Enter a text of %d characters:\n", MAX_ARRAY_CHAR);
+    printf("Enter a text of %d characters:\n", MAX_ARRAY_CHAR - 1);
 
     fgets(mainArrayChar, MAX_ARRAY_CHAR, stdin);
 
