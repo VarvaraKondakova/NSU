@@ -138,7 +138,7 @@ int correctText(char *pointerText) {
 int main() {
     char mainArrayChar[MAX_ARRAY_CHAR];
 
-    printf("Enter a text of %d characters:\n", MAX_ARRAY_CHAR - 1);
+    printf("Enter a text:\n");
 
     fgets(mainArrayChar, MAX_ARRAY_CHAR, stdin);
 
