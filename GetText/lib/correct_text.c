@@ -38,9 +38,14 @@ int isSentenceEnd(char symbol) {
     return symbol == '.' || symbol == '!' || symbol == '?';
 }
 
-// Является пробелом, табом и переходом на новую строку
+// Является пробелом  или табом
 int isSpace(char symbol) {
-    return symbol == ' ' || symbol == '\t' || symbol == '\n';
+    return symbol == ' ' || symbol == '\t';
+}
+
+//Является переходом на новую строку
+int isEnter(char symbol) {
+    return symbol == '\n';
 }
 
 // Является ли знаком препинания
@@ -78,6 +83,8 @@ int correctText(char *pointerText, size_t allocatedSize) {
     for (int i = 0; pointerText[i] != '\0'; i++) {
         if ((isSpace(pointerText[i]) && isStartText) || (isPunctuationMarks(pointerText[i]) && isStartText)) {
             deleteChar(pointerText, i);
+            i--;
+            continue;
         }
 
         if (isLetter(pointerText[i])) {
@@ -96,6 +103,12 @@ int correctText(char *pointerText, size_t allocatedSize) {
         }
 
         if (isSpace(pointerText[i]) && isSpace(pointerText[i + 1])) {
+            deleteChar(pointerText, i);
+            i--;
+            continue;
+        }
+
+        if (isEnter(pointerText[i - 1]) && isSpace(pointerText[i])) {
             deleteChar(pointerText, i);
             i--;
             continue;

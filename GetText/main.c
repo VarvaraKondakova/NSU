@@ -55,7 +55,7 @@ int main() {
 
 void choiceStdinText(int *pointer) {
     while (1) {
-        printf("Choose a text input method:\n1. Text input via the console.\n2.Reading text from a file\n_: ");
+        printf("Choose a text input method:\n1.Text input via the console.\n2.Reading text from a file\n_: ");
 
         if (scanf("%d", pointer) != 1 || getchar() != '\n') {
             printf("Incorrect value was entered for text input selection.!\n");
@@ -155,7 +155,7 @@ char *GetText(FILE *stream, char terminator) {
         buffer[sizeData++] = ch;
     }
 
-    buffer[sizeData] = '\0';
+    buffer[sizeData++] = '\0';
 
     if (!correctText(buffer, capacity)) {
         fprintf(stderr, "Couldn't edit the text!\n");
