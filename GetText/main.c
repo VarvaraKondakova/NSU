@@ -10,7 +10,7 @@ void choiceStdinText(int *pointer);
 
 FILE *selectInputSource(int choice);
 
-char *myRealloc(char *oldPointer, size_t oldAllocatedSize, size_t newAllocatedSize, size_t dataSize);
+char *myRealloc(char *pointer, size_t oldSize, size_t newSize);
 
 char *GetText(FILE *stream, char terminator);
 
@@ -97,29 +97,37 @@ FILE *selectInputSource(int choice) {
     }
 }
 
-char *myRealloc(char *oldPointer, size_t oldAllocatedSize, size_t newAllocatedSize, size_t dataSize) {
-    if (newAllocatedSize < 0) {
+
+char *myRealloc(char *pointer, size_t oldSize, size_t newSize)
+{
+    if (newSize < 0)
+    {
         return NULL;
     }
 
-    if (newAllocatedSize == 0) {
-        free(oldPointer);
+    if (newSize == 0)
+    {
+        free(pointer);
         return NULL;
     }
 
-    if (oldPointer == NULL) {
-        return (char *) malloc(newAllocatedSize);
+    if (pointer == NULL)
+    {
+        return (char *)malloc(newSize);
     }
 
-    char *newPointer = (char *) malloc(newAllocatedSize);
-    if (newPointer == NULL) {
+    size_t newAllocateSize = oldSize < newSize ? oldSize : newSize;
+    char *newPointer = (char *)malloc(newAllocateSize);
+    if (newPointer == NULL)
+    {
         return NULL;
     }
 
-    size_t bytesToCopy = dataSize < newAllocatedSize ? dataSize : newAllocatedSize;
-    memcpy(newPointer, oldPointer, bytesToCopy);
-
-    free(oldPointer);
+    if (pointer != NULL)
+    {
+        memcpy(newPointer, pointer, newAllocateSize);
+        free(pointer);
+    }
 
     return newPointer;
 }
@@ -140,7 +148,7 @@ char *GetText(FILE *stream, char terminator) {
         if (sizeData >= capacity - 1)
         {
             size_t newCapacity = capacity * 2;
-            char *temp = myRealloc(buffer, capacity, newCapacity, sizeData);
+            char *temp = myRealloc(buffer, capacity, newCapacity);
 
             if (temp == NULL) {
                 fprintf(stderr, "Dynamic memory overallocation error!\n");
@@ -163,7 +171,7 @@ char *GetText(FILE *stream, char terminator) {
         return NULL;
     }
 
-    char *result = (char *) myRealloc(buffer, capacity, sizeData + 1, sizeData);
+    char *result = (char *) myRealloc(buffer, capacity, strlen(buffer) + 1);
     if (result == NULL) {
         fprintf(stderr, "Couldn't reduce the size of the allocated memory for the string!\n");
         free(buffer);
